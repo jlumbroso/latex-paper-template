@@ -266,9 +266,26 @@ Make sure your bibliography file is in `bib/references.bib` and uncommented in `
 \bibliography{references}  % Should NOT have .bib extension
 ```
 
+### "Option clash" or "Command already defined" errors
+
+These errors occur when trying to load packages that the template already includes.
+
+**Solution**: Check `paper.tex` - the ACM template (acmart) pre-loads many packages:
+- `natbib`, `graphicx`, `booktabs`, `url`, `hyperref`
+- `amsmath`, `amsfonts`, `amssymb`
+- `geometry`, `xcolor`, `caption`, `float`
+
+**Don't reload these packages!** Instead:
+- Use `\urlstyle{rm}` directly (don't reload `url` with options)
+- Just use the math symbols (don't reload `amssymb`)
+- Customize with `\captionsetup` (don't reload `caption`)
+
+The template is already configured to avoid these conflicts.
+
 ### Build fails on GitHub Actions
 
 Check the Actions tab for error logs. Common issues:
+- Package conflicts (see above)
 - Missing packages (add them to `build-paper.yml`)
 - Template incompatibility (test locally first)
 

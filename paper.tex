@@ -14,39 +14,40 @@
 %% ============================================
 %% PACKAGES
 %% ============================================
+%
+% NOTE: The acmart class already loads many common packages including:
+% - natbib, graphicx, booktabs, url, hyperref
+% - amsmath, amsfonts, amssymb (via amsart)
+% - geometry, xcolor, caption, float
+% Do not reload these packages or LaTeX will give "Option clash" errors.
 
-% Core packages
-\usepackage{natbib}
-\usepackage{graphicx}
-\usepackage{booktabs}
-\usepackage[hyphens]{url}
-\urlstyle{rm}
-
-% Typography
-\usepackage{times}
-\usepackage{helvet}
-\usepackage{courier}
+% Typography packages not loaded by acmart
+% (times, helvet, courier are loaded by acmart's font system)
 \frenchspacing
 
-% Additional useful packages
+% Set URL style (acmart already loads url package)
+\urlstyle{rm}
+
+% Additional algorithm packages
 \usepackage{algorithm}
 \usepackage{algorithmic}
-\usepackage{amssymb}      % For math symbols
-\usepackage{pifont}       % For special symbols
+
+% Additional useful packages
+\usepackage{pifont}       % For special symbols like \ding
 \usepackage{subfig}       % For subfigures
-\usepackage{float}        % For better figure placement
-\usepackage{comment}      % For conditional content blocks
+
+% Comment package for conditional compilation
+\usepackage{comment}
 
 % TODO notes package - helpful for drafting
 % Use \todo{...} for margin notes, \todo[inline]{...} for inline notes
 % Remove or compile with 'final' option before submission
 \usepackage{todonotes}
 
-% Caption formatting
-\usepackage{caption}
+% Customize caption formatting (acmart loads caption package already)
 \captionsetup{font=small,labelfont=bf,textfont=normal}
 
-% Page setup
+% Page setup (acmart handles most of this, but we can set these)
 \setlength{\pdfpagewidth}{8.5in}
 \setlength{\pdfpageheight}{11in}
 \setcounter{secnumdepth}{0}
