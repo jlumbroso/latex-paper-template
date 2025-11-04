@@ -43,12 +43,11 @@ jobs:
         # Also check for .bib files in root (fallback)
         cp *.bib paper-sources/ 2>/dev/null || echo "No .bib files in root"
         
-    - name: 🎨 Copy AAAI template files
+    - name: 🎨 Copy ACM template files
       run: |
-        # Copy AAAI template files that are required
-        mkdir -p paper-sources/templates/aaai
-        cp templates/aaai/aaai2026.sty paper-sources/templates/aaai/
-        cp templates/aaai/aaai2026.bst paper-sources/templates/aaai/
+        # Copy ACM template files that are required
+        mkdir -p paper-sources/templates/acm
+        cp -r templates/acm/* paper-sources/templates/acm/
         
     - name: 🖼️ Copy figures if they exist
       run: |
@@ -64,34 +63,34 @@ jobs:
     - name: 📝 Create README for sources
       run: |
         cat > paper-sources/README.txt << 'EOF'
-        EAAI-2026 Paper Sources
-        =======================
-        
-        This archive contains the LaTeX sources for submission to EAAI-2026.
-        
+        Paper LaTeX Sources
+        ===================
+
+        This archive contains the LaTeX sources for the paper.
+
         Files included:
         - paper.tex: Main paper file (configured for camera-ready by default)
-        - templates/aaai/: AAAI 2026 style files
+        - templates/acm/: ACM template style files
         - *.bib: Bibliography files (if present, copied to root)
         - figures/: Figure files (if present)
         - images/: Image files (if present)
-        
+
         Compilation instructions:
         1. Ensure you have a LaTeX distribution installed (e.g., TeX Live, MiKTeX)
         2. Run: pdflatex paper.tex
         3. Run: bibtex paper
         4. Run: pdflatex paper.tex (twice more for references)
-        
-        Or use latexmk:
+
+        Or use latexmk (recommended):
         latexmk -pdf paper.tex
-        
+
         Note: The paper is configured for camera-ready mode by default.
         To switch to anonymous submission mode, create a file named
         paper-config.tex with the following content:
-        
+
         \newif\ifanonymous
         \anonymoustrue
-        
+
         EOF
         
     - name: 🗜️ Create ZIP archive
@@ -124,18 +123,18 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         files: paper-sources.zip
         body: |
-          📦 **Paper sources for EAAI-2026 submission**
-          
+          📦 **Paper LaTeX sources**
+
           This ZIP file contains all necessary LaTeX sources and style files
           for compiling the paper. The paper is configured for camera-ready
           mode by default (without paper-config.tex).
-          
+
           📋 **Included files:**
           - 📄 paper.tex (main document)
-          - 🎨 AAAI 2026 style files
+          - 🎨 ACM template style files
           - 📚 Bibliography files
           - 🖼️ Figures (if present)
-          
+
           See README.txt in the archive for compilation instructions.
         draft: false
         prerelease: false

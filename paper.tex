@@ -1,6 +1,5 @@
 % Load configuration for submission mode
-
-% Check if paper-config.tex exists, otherwise default to camera-ready
+% This allows switching between anonymous submission and camera-ready versions
 \IfFileExists{paper-config.tex}{%
     \input{paper-config}%
 }{%
@@ -9,63 +8,82 @@
     \anonymousfalse  % Camera-ready mode by default
 }
 
+% ACM template - change this to match your target conference/journal
 \documentclass[letterpaper]{acmart}
 
-% % AAAI 2026 template packages
-% \ifanonymous
-%     \usepackage[submission]{templates/aaai/aaai2026}
-% \else
-%     \usepackage{templates/aaai/aaai2026}
-% \fi
-% Note: The AAAI template automatically sets \bibliographystyle when natbib is loaded
-% So we load natbib after the template to avoid duplicate \bibstyle commands
+%% ============================================
+%% PACKAGES
+%% ============================================
+
+% Core packages
 \usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage[hyphens]{url}
+\urlstyle{rm}
+
+% Typography
 \usepackage{times}
 \usepackage{helvet}
 \usepackage{courier}
-\usepackage[hyphens]{url}
-\usepackage{graphicx}
-\urlstyle{rm}
-\def\UrlFont{\rm}
-\usepackage{caption}
 \frenchspacing
+
+% Additional useful packages
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{amssymb}      % For math symbols
+\usepackage{pifont}       % For special symbols
+\usepackage{subfig}       % For subfigures
+\usepackage{float}        % For better figure placement
+\usepackage{comment}      % For conditional content blocks
+
+% TODO notes package - helpful for drafting
+% Use \todo{...} for margin notes, \todo[inline]{...} for inline notes
+% Remove or compile with 'final' option before submission
+\usepackage{todonotes}
+
+% Caption formatting
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf,textfont=normal}
+
+% Page setup
 \setlength{\pdfpagewidth}{8.5in}
 \setlength{\pdfpageheight}{11in}
 \setcounter{secnumdepth}{0}
 
-% Additional packages (allowed by AAAI)
-\usepackage{algorithm}
-\usepackage{algorithmic}
-\usepackage{booktabs}
-\usepackage{todonotes}
-\usepackage{comment}  % For suppressing content in anonymous mode
-\usepackage{amssymb}  % For \square and \checkmark symbols
-\usepackage{pifont}   % For \ding symbols
-\usepackage{subfig}
+%% ============================================
+%% ANONYMIZATION HELPERS
+%% ============================================
 
-% Customize figure caption format to be bold
-\usepackage{caption}
-\captionsetup{font=small,labelfont=bf,textfont=normal}
-
-% For better figure placement control
-\usepackage{float}
-
-% Helper macros for anonymization
+% Generic helper macro for inline anonymization
+% Usage: \anontext{anonymous version}{named version}
 \ifanonymous
-    \newcommand{\ProfLumbroso}{Prof. Anonymous}
-    \newcommand{\UofP}{[Institution Anonymized]}
-    \newcommand{\CISSWE}{\textsc{[Course Anonymized]}}
-    \newcommand{\PennEng}{[Engineering School Anonymized]}
+    \newcommand{\anontext}[2]{#1}
 \else
-    \newcommand{\ProfLumbroso}{Prof. Lumbroso}
-    \newcommand{\UofP}{University of Pennsylvania}
-    \newcommand{\CISSWE}{\textsc{CIS 3500}}
-    \newcommand{\PennEng}{Penn Engineering}
+    \newcommand{\anontext}[2]{#2}
 \fi
+
+% Example custom macros for commonly-used terms
+% Customize these for your paper, or remove if not needed
+\ifanonymous
+    \newcommand{\OurInstitution}{[Institution Anonymized]}
+    \newcommand{\OurDepartment}{[Department Anonymized]}
+    \newcommand{\OurLab}{[Lab Name Anonymized]}
+\else
+    \newcommand{\OurInstitution}{Example University}
+    \newcommand{\OurDepartment}{Department of Computer Science}
+    \newcommand{\OurLab}{AI Research Lab}
+\fi
+
+% Common abbreviation
 \def\etal{\textit{et al.}}
 
+%% ============================================
+%% ACKNOWLEDGMENTS COMPATIBILITY
+%% ============================================
+
 % Ensure acks environment exists for compatibility across templates
-% If template doesn't define it, create one that uses section*
+% Automatically suppresses acknowledgments in anonymous mode
 \ifx\acks\undefined
     \ifanonymous
         % In anonymous mode, suppress acknowledgments entirely
@@ -76,53 +94,161 @@
     \fi
 \fi
 
+%% ============================================
+%% METADATA
+%% ============================================
+
 % PDF metadata
 \pdfinfo{
 /TemplateVersion (2026.1)
 }
 
-% Title
-\title{Paper Title}
+% Title - Update this with your paper title
+\title{Example Paper Title: Demonstrating the Template}
 
-% Author information
+% Author information - Update with your details
 \ifanonymous
     \author{Anonymous Submission}
 \else
     \author{
-        Jérémie O. Lumbroso\\
-        University of Pennsylvania\\
-        Computer and Information Science\\
-        Philadelphia, PA, USA\\
-        lumbroso@seas.upenn.edu
+        First Author\\
+        Example University\\
+        Department of Computer Science\\
+        City, State, Country\\
+        first.author@example.edu
+        \and
+        Second Author\\
+        Another University\\
+        Department of Engineering\\
+        City, State, Country\\
+        second.author@example.edu
     }
 \fi
 
-\begin{document}
-\maketitle
+%% ============================================
+%% DOCUMENT BEGINS
+%% ============================================
 
+\begin{document}
+
+% NOTE: For ACM template, abstract must come BEFORE \maketitle
 \begin{abstract}
-    Abstract for the paper.
+This is an example abstract demonstrating the format and typical structure.
+The abstract should concisely summarize the problem, approach, and key contributions of the paper.
+It typically ranges from 150-250 words and should be self-contained, allowing readers to understand the paper's scope without reading further.
+Replace this text with your actual abstract.
 \end{abstract}
+
+\maketitle
 
 %% ============================================
 \section{Introduction}
 \label{sec:intro}
 
+This is a fixture introduction demonstrating typical paper structure.
+A good introduction typically includes several key elements that guide the reader into your work.
+
+\paragraph{Motivation and Context.}
+Start by establishing why your research area matters.
+What is the broader context?
+Why should readers care about this problem?
+For example, recent advances in machine learning have enabled new applications~\cite{Smith2023}, but significant challenges remain in scalability and efficiency.
+
+\paragraph{The Problem.}
+Clearly articulate the specific problem you're addressing.
+What gap exists in current knowledge or practice?
+Despite progress in neural network architectures~\cite{Chen2024,Davis2022}, existing approaches struggle with computational efficiency when deployed at scale.
+
+\paragraph{Our Approach.}
+Briefly describe your solution or contribution at a high level.
+What is your key insight or innovation?
+We propose a novel method that leverages adaptive optimization to reduce training time while maintaining accuracy.
+
+\paragraph{Contributions.}
+Enumerate your specific contributions in a clear, bulleted format.
+This helps reviewers quickly understand what is novel about your work:
+\begin{itemize}
+    \item A new algorithm for efficient neural network training that reduces computation by 40\%.
+    \item Theoretical analysis demonstrating convergence guarantees under realistic assumptions.
+    \item Empirical evaluation on five benchmark datasets showing state-of-the-art performance.
+    \item Open-source implementation available for reproducibility.
+\end{itemize}
+
+\paragraph{Paper Organization.}
+Conclude the introduction with a roadmap of the paper's structure.
+Section~\ref{sec:related} reviews related work.
+Section~\ref{sec:conclusion} concludes with discussion of future directions.
+
+%% ============================================
+\section{Related Work}
+\label{sec:related}
+
+This section surveys relevant prior work and positions your contribution within the broader research landscape.
+Organize related work thematically rather than chronologically for better clarity.
+
+\paragraph{Traditional Approaches.}
+Early work in this area focused on foundational techniques~\cite{Russell2021}.
+These methods established important baselines but faced limitations in scalability and generalization.
+
+\paragraph{Modern Deep Learning Methods.}
+Recent neural network approaches~\cite{Chen2024,Smith2023} have demonstrated impressive results on benchmark tasks.
+However, they typically require extensive computational resources and large datasets.
+
+\paragraph{Efficient Training Techniques.}
+Several recent works have explored optimization strategies for reducing training costs~\cite{Kumar2023}.
+Our approach differs by incorporating adaptive mechanisms that dynamically adjust computational budgets.
+
+\paragraph{Positioning Our Work.}
+Unlike previous methods that focus solely on algorithmic improvements, we provide both theoretical guarantees and practical implementations, making our approach accessible to practitioners.
 
 %% ============================================
 \section{Conclusion}
 \label{sec:conclusion}
 
+This section summarizes the key contributions and discusses future directions.
+
+We presented a novel approach to efficient neural network training that achieves significant computational savings while maintaining competitive accuracy.
+Our theoretical analysis provides convergence guarantees, and empirical results on benchmark datasets validate the effectiveness of our method.
+
+\paragraph{Future Directions.}
+Several promising avenues for future work include:
+(1) extending our approach to other neural architectures beyond feedforward networks,
+(2) investigating applications to other domains such as natural language processing, and
+(3) developing automated methods for hyperparameter selection.
+
+\paragraph{Broader Impact.}
+By reducing the computational requirements for training, our work has the potential to democratize access to machine learning tools and reduce the environmental impact of AI research~\cite{OpenAI2023}.
+
+%% ============================================
+%% ACKNOWLEDGMENTS
+%% ============================================
 
 \begin{acks}
-We want to thank.
+We thank the anonymous reviewers for their helpful feedback.
+This work was supported by Example Funding Agency grant number 12345.
+We also thank colleagues at \OurLab{} for valuable discussions.
 \end{acks}
 
-%%\bibliography{bib/dreamweaving-combined}
+%% ============================================
+%% BIBLIOGRAPHY
+%% ============================================
 
-%%\cleardoublepage
+% Use the bibliography file in bib/references.bib
+% Adjust the bibliography style as needed for your conference/journal
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{references}
 
-%%\appendix
+%% ============================================
+%% APPENDIX (Optional)
+%% ============================================
 
+% Uncomment to add appendices
+% \clearpage
+% \appendix
+%
+% \section{Additional Experimental Results}
+% \label{app:experiments}
+%
+% Additional tables, figures, proofs, or implementation details can go here.
 
 \end{document}
