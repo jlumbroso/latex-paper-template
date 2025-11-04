@@ -1,0 +1,5 @@
+[General]
+IniMode=true
+
+[Tools]
+OutputDirectory=./_build

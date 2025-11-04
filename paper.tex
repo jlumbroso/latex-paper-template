@@ -1,0 +1,128 @@
+% Load configuration for submission mode
+
+% Check if paper-config.tex exists, otherwise default to camera-ready
+\IfFileExists{paper-config.tex}{%
+    \input{paper-config}%
+}{%
+    % Default to camera-ready if config file doesn't exist
+    \newif\ifanonymous
+    \anonymousfalse  % Camera-ready mode by default
+}
+
+\documentclass[letterpaper]{acmart}
+
+% % AAAI 2026 template packages
+% \ifanonymous
+%     \usepackage[submission]{templates/aaai/aaai2026}
+% \else
+%     \usepackage{templates/aaai/aaai2026}
+% \fi
+% Note: The AAAI template automatically sets \bibliographystyle when natbib is loaded
+% So we load natbib after the template to avoid duplicate \bibstyle commands
+\usepackage{natbib}
+\usepackage{times}
+\usepackage{helvet}
+\usepackage{courier}
+\usepackage[hyphens]{url}
+\usepackage{graphicx}
+\urlstyle{rm}
+\def\UrlFont{\rm}
+\usepackage{caption}
+\frenchspacing
+\setlength{\pdfpagewidth}{8.5in}
+\setlength{\pdfpageheight}{11in}
+\setcounter{secnumdepth}{0}
+
+% Additional packages (allowed by AAAI)
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{booktabs}
+\usepackage{todonotes}
+\usepackage{comment}  % For suppressing content in anonymous mode
+\usepackage{amssymb}  % For \square and \checkmark symbols
+\usepackage{pifont}   % For \ding symbols
+\usepackage{subfig}
+
+% Customize figure caption format to be bold
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf,textfont=normal}
+
+% For better figure placement control
+\usepackage{float}
+
+% Helper macros for anonymization
+\ifanonymous
+    \newcommand{\ProfLumbroso}{Prof. Anonymous}
+    \newcommand{\UofP}{[Institution Anonymized]}
+    \newcommand{\CISSWE}{\textsc{[Course Anonymized]}}
+    \newcommand{\PennEng}{[Engineering School Anonymized]}
+\else
+    \newcommand{\ProfLumbroso}{Prof. Lumbroso}
+    \newcommand{\UofP}{University of Pennsylvania}
+    \newcommand{\CISSWE}{\textsc{CIS 3500}}
+    \newcommand{\PennEng}{Penn Engineering}
+\fi
+\def\etal{\textit{et al.}}
+
+% Ensure acks environment exists for compatibility across templates
+% If template doesn't define it, create one that uses section*
+\ifx\acks\undefined
+    \ifanonymous
+        % In anonymous mode, suppress acknowledgments entirely
+        \excludecomment{acks}
+    \else
+        % In camera-ready mode, create acknowledgments section
+        \newenvironment{acks}{\section*{Acknowledgments}}{}
+    \fi
+\fi
+
+% PDF metadata
+\pdfinfo{
+/TemplateVersion (2026.1)
+}
+
+% Title
+\title{Paper Title}
+
+% Author information
+\ifanonymous
+    \author{Anonymous Submission}
+\else
+    \author{
+        Jérémie O. Lumbroso\\
+        University of Pennsylvania\\
+        Computer and Information Science\\
+        Philadelphia, PA, USA\\
+        lumbroso@seas.upenn.edu
+    }
+\fi
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+    Abstract for the paper.
+\end{abstract}
+
+%% ============================================
+\section{Introduction}
+\label{sec:intro}
+
+
+%% ============================================
+\section{Conclusion}
+\label{sec:conclusion}
+
+
+\begin{acks}
+We want to thank.
+\end{acks}
+
+%%\bibliography{bib/dreamweaving-combined}
+
+%%\cleardoublepage
+
+%%\appendix
+
+
+\end{document}
