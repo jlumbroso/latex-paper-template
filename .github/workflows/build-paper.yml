@@ -1,0 +1,108 @@
+name: Build LaTeX Paper
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+permissions:
+  contents: write  # Required for creating releases
+  pull-requests: write
+  issues: write
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch all history for commit logs
+    
+    - name: 📦 Install LaTeX dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          texlive-latex-base \
+          texlive-latex-recommended \
+          texlive-latex-extra \
+          texlive-fonts-recommended \
+          texlive-fonts-extra \
+          texlive-bibtex-extra \
+          texlive-science \
+          texlive-publishers \
+          latexmk \
+          biber
+    
+    - name: 🔨 Build LaTeX paper
+      run: |
+        latexmk -pdf paper.tex
+    
+    - name: 📝 Prepare release filename
+      run: |
+        # Use repository name as base for the PDF name
+        REPO_NAME="${{ github.event.repository.name }}"
+        TIMESTAMP=$(date +'%Y-%m-%d-%H-%M')
+        echo "PROJECT_NAME=${REPO_NAME}" >> $GITHUB_ENV
+        echo "RELEASE_NAME=${REPO_NAME}-${TIMESTAMP}.pdf" >> $GITHUB_ENV
+        
+        # The PDF name is derived from the folder name by latexmk
+        # So we need to find the actual output file
+        PDF_FILE=$(find _build -name "*.pdf" -type f | head -1)
+        cp "${PDF_FILE}" "${REPO_NAME}-${TIMESTAMP}.pdf"
+    
+    - name: 📤 Upload PDF artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: paper-pdf
+        path: ${{ env.PROJECT_NAME }}-*.pdf
+    
+    - name: 📝 Get commit history since last release
+      id: commits
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      run: |
+        # Get the previous release tag
+        PREVIOUS_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+        
+        if [ -z "$PREVIOUS_TAG" ]; then
+          echo "No previous tag found, getting last 10 commits"
+          COMMITS=$(git log --pretty=format:"- %s (%an)" -10)
+        else
+          echo "Getting commits since $PREVIOUS_TAG"
+          COMMITS=$(git log ${PREVIOUS_TAG}..HEAD --pretty=format:"- %s (%an)")
+        fi
+        
+        # Handle multiline output for GitHub Actions
+        echo "commits<<EOF" >> $GITHUB_OUTPUT
+        echo "$COMMITS" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+        
+        # Also save the previous tag for reference
+        echo "previous_tag=$PREVIOUS_TAG" >> $GITHUB_OUTPUT
+    
+    - name: 🚀 Create GitHub Release
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      uses: softprops/action-gh-release@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        tag_name: build-${{ github.run_number }}
+        name: Build ${{ github.run_number }} - ${{ env.RELEASE_NAME }}
+        files: ${{ env.RELEASE_NAME }}
+        draft: false
+        prerelease: false
+        body: |
+          Automated build of the paper from commit ${{ github.sha }}
+          
+          **Build Details:**
+          - 📄 PDF: ${{ env.RELEASE_NAME }}
+          - 🔖 Commit: ${{ github.sha }}
+          - 🌿 Branch: ${{ github.ref_name }}
+          - 🕐 Build: #${{ github.run_number }}
+          
+          **📋 Changes in this build:**
+          ${{ steps.commits.outputs.commits }}
+          
+          ${{ steps.commits.outputs.previous_tag && format('_Changes since {0}_', steps.commits.outputs.previous_tag) || '_Initial build_' }}

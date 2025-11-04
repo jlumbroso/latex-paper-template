@@ -1,0 +1,82 @@
+{
+  "latex-workshop.latex.recipe.default": "latexmk (latexmkrc)",
+  "latex-workshop.latex.recipes": [
+    {
+      "name": "latexmk (latexmkrc)",
+      "tools": [
+        "latexmk_rcfile"
+      ]
+    }
+  ],
+  "latex-workshop.latex.tools": [
+    {
+      "name": "latexmk_rcfile",
+      "command": "latexmk",
+      "args": [
+        "%DOC%"
+      ],
+      "env": {}
+    }
+  ],
+  "latex-workshop.view.pdf.viewer": "tab",
+  "latex-workshop.latex.outDir": "./_build",
+  "latex-workshop.latex.outputDir": "./_build",
+  "latex-workshop.latex.autoClean.run": "onBuilt",
+  "latex-workshop.latex.clean.fileTypes": [
+    "*.aux",
+    "*.bbl",
+    "*.blg",
+    "*.idx",
+    "*.ind",
+    "*.lof",
+    "*.lot",
+    "*.out",
+    "*.toc",
+    "*.acn",
+    "*.acr",
+    "*.alg",
+    "*.glg",
+    "*.glo",
+    "*.gls",
+    "*.fls",
+    "*.log",
+    "*.fdb_latexmk",
+    "*.snm",
+    "*.nav",
+    "*.synctex.gz"
+  ],
+  "files.exclude": {
+    "**/*.aux": true,
+    "**/*.log": true,
+    "**/*.fls": true,
+    "**/*.fdb_latexmk": true,
+    "**/*.synctex.gz": true,
+    "**/*.bbl": true,
+    "**/*.blg": true,
+    "**/*.out": true,
+    "**/*.toc": true
+  },
+  "files.associations": {
+    "*.tex": "latex"
+  },
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#f8d64d",
+    "activityBar.background": "#f8d64d",
+    "activityBar.foreground": "#15202b",
+    "activityBar.inactiveForeground": "#15202b99",
+    "activityBarBadge.background": "#06997c",
+    "activityBarBadge.foreground": "#e7e7e7",
+    "commandCenter.border": "#15202b99",
+    "sash.hoverBorder": "#f8d64d",
+    "statusBar.background": "#f6cb1c",
+    "statusBar.foreground": "#15202b",
+    "statusBarItem.hoverBackground": "#d6ae09",
+    "statusBarItem.remoteBackground": "#f6cb1c",
+    "statusBarItem.remoteForeground": "#15202b",
+    "titleBar.activeBackground": "#f6cb1c",
+    "titleBar.activeForeground": "#15202b",
+    "titleBar.inactiveBackground": "#f6cb1c99",
+    "titleBar.inactiveForeground": "#15202b99"
+  },
+  "peacock.color": "#F6CB1C"
+}

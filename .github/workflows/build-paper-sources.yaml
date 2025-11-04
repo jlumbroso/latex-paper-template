@@ -1,0 +1,141 @@
+name: 📦 Build Paper Sources ZIP
+
+on:
+  push:
+    branches: [ main ]
+    tags:
+      - 'v*'
+      - 'sources-*'
+  workflow_dispatch:
+    inputs:
+      release_name:
+        description: 'Release name (e.g., sources-v1.0)'
+        required: false
+        default: 'sources-latest'
+
+permissions:
+  contents: write  # Required for creating releases
+  pull-requests: write
+  issues: write
+
+jobs:
+  build-sources:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: 📁 Create sources directory
+      run: mkdir -p paper-sources
+    
+    - name: 📄 Copy paper.tex (without config dependency)
+      run: |
+        # Copy paper.tex to sources directory
+        cp paper.tex paper-sources/
+        
+    - name: 📚 Copy bibliography files
+      run: |
+        # Copy all .bib files from bib directory to root of sources
+        if [ -d "bib" ]; then
+          cp bib/*.bib paper-sources/ 2>/dev/null || echo "No .bib files in bib directory"
+        fi
+        # Also check for .bib files in root (fallback)
+        cp *.bib paper-sources/ 2>/dev/null || echo "No .bib files in root"
+        
+    - name: 🎨 Copy AAAI template files
+      run: |
+        # Copy AAAI template files that are required
+        mkdir -p paper-sources/templates/aaai
+        cp templates/aaai/aaai2026.sty paper-sources/templates/aaai/
+        cp templates/aaai/aaai2026.bst paper-sources/templates/aaai/
+        
+    - name: 🖼️ Copy figures if they exist
+      run: |
+        # Copy figures directory if it exists
+        if [ -d "figures" ]; then
+          cp -r figures paper-sources/
+        fi
+        # Also check for images directory
+        if [ -d "images" ]; then
+          cp -r images paper-sources/
+        fi
+        
+    - name: 📝 Create README for sources
+      run: |
+        cat > paper-sources/README.txt << 'EOF'
+        EAAI-2026 Paper Sources
+        =======================
+        
+        This archive contains the LaTeX sources for submission to EAAI-2026.
+        
+        Files included:
+        - paper.tex: Main paper file (configured for camera-ready by default)
+        - templates/aaai/: AAAI 2026 style files
+        - *.bib: Bibliography files (if present, copied to root)
+        - figures/: Figure files (if present)
+        - images/: Image files (if present)
+        
+        Compilation instructions:
+        1. Ensure you have a LaTeX distribution installed (e.g., TeX Live, MiKTeX)
+        2. Run: pdflatex paper.tex
+        3. Run: bibtex paper
+        4. Run: pdflatex paper.tex (twice more for references)
+        
+        Or use latexmk:
+        latexmk -pdf paper.tex
+        
+        Note: The paper is configured for camera-ready mode by default.
+        To switch to anonymous submission mode, create a file named
+        paper-config.tex with the following content:
+        
+        \newif\ifanonymous
+        \anonymoustrue
+        
+        EOF
+        
+    - name: 🗜️ Create ZIP archive
+      run: |
+        cd paper-sources
+        zip -r ../paper-sources.zip .
+        cd ..
+        
+    - name: 🏷️ Generate artifact name
+      id: artifact_name
+      run: |
+        if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+          echo "name=${{ github.event.inputs.release_name }}" >> $GITHUB_OUTPUT
+        elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
+          echo "name=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+        else
+          echo "name=sources-$(date +%Y%m%d-%H%M%S)" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: 📤 Upload sources as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: paper-sources-${{ steps.artifact_name.outputs.name }}
+        path: paper-sources.zip
+        
+    - name: 🚀 Create Release (if tagged)
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        files: paper-sources.zip
+        body: |
+          📦 **Paper sources for EAAI-2026 submission**
+          
+          This ZIP file contains all necessary LaTeX sources and style files
+          for compiling the paper. The paper is configured for camera-ready
+          mode by default (without paper-config.tex).
+          
+          📋 **Included files:**
+          - 📄 paper.tex (main document)
+          - 🎨 AAAI 2026 style files
+          - 📚 Bibliography files
+          - 🖼️ Figures (if present)
+          
+          See README.txt in the archive for compilation instructions.
+        draft: false
+        prerelease: false
